@@ -8,7 +8,7 @@ const FoodPartnerLogin = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const email = e.target.email.value;
     const password = e.target.password.value;

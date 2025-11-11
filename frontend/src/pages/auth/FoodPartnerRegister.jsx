@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const FoodPartnerRegister = () => {
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   
   const handleSubmit = (e) => { 
     e.preventDefault();
@@ -31,7 +31,7 @@ const FoodPartnerRegister = () => {
         navigate("/create-food"); // Redirect to create food page after successful registration
       })
       .catch(error => {
-        console.error("There was an error registering!", error);
+        console.error("There was an error registering!", error)
       });
   };
 
