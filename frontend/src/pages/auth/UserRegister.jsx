@@ -28,7 +28,7 @@ const UserRegister = () => {
 
         console.log(response.data);
 
-        navigate("/")
+        navigate("/home") // Redirect to home after registration mis complete
 
     };
 
@@ -46,11 +46,11 @@ const UserRegister = () => {
                     <div className="two-col">
                         <div className="field-group">
                             <label htmlFor="firstName">First Name</label>
-                            <input id="firstName" name="firstName" placeholder="Jane" autoComplete="given-name" />
+                            <input id="firstName" name="firstName" placeholder="Rahul" autoComplete="given-name" />
                         </div>
                         <div className="field-group">
                             <label htmlFor="lastName">Last Name</label>
-                            <input id="lastName" name="lastName" placeholder="Doe" autoComplete="family-name" />
+                            <input id="lastName" name="lastName" placeholder="singh" autoComplete="family-name" />
                         </div>
                     </div>
                     <div className="field-group">

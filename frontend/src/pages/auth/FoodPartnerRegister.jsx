@@ -28,7 +28,7 @@ const FoodPartnerRegister = () => {
     }, { withCredentials: true })
       .then(response => {
         console.log(response.data);
-        navigate("/create-food"); // Redirect to create food page after successful registration
+        navigate("/create-food"); // Redirect ho jayega create food page par
       })
       .catch(error => {
         console.error("There was an error registering!", error)
@@ -53,11 +53,11 @@ const FoodPartnerRegister = () => {
           <div className="two-col">
             <div className="field-group">
               <label htmlFor="contactName">Contact Name</label>
-              <input id="contactName" name="contactName" placeholder="Jane Doe" autoComplete="name" />
+              <input id="contactName" name="contactName" placeholder="Rahul" autoComplete="name" />
             </div>
             <div className="field-group">
               <label htmlFor="phone">Phone</label>
-              <input id="phone" name="phone" placeholder="+1 555 123 4567" autoComplete="tel" />
+              <input id="phone" name="phone" placeholder="+91 xxxx-xxxx" autoComplete="tel" />
             </div>
           </div>
             <div className="field-group">
