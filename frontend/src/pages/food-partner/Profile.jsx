@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../../styles/profile.css'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
@@ -51,14 +51,14 @@ const Profile = () => {
 
             <section className="profile-grid" aria-label="Videos">
                 {videos.map((v) => (
-                    <div key={v.id} className="profile-grid-item">
+                    <div key={v._id} className="profile-grid-item">
                         {/* Placeholder tile; replace with <video> or <img> as needed */}
 
 
                         <video
                             className="profile-grid-video"
                             style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                            src={v.video} muted ></video>
+                            src={v.video} muted controls></video>
 
 
                     </div>

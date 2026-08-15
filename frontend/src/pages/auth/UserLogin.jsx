@@ -8,20 +8,24 @@ const UserLogin = () => {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const response = await axios.post("http://localhost:3000/api/auth/user/login", {
-      email,
-      password
-    }, { withCredentials: true })
+    try {
+      const response = await axios.post("http://localhost:3000/api/auth/user/login", {
+        email,
+        password
+      }, { withCredentials: true });
 
-    console.log(response.data);
-
-    navigate("/home"); // login hote hi  home page par 
-
+      console.log(response.data);
+      navigate("/home"); // Navigate only on success
+    } catch (error) {
+      console.error("Login error:", error);
+      // Optionally, display an error message to the user (e.g., via state or an alert)
+      alert("Login failed: " + (error.response?.data?.message || error.message));
+    }
   };
 
   return (
