@@ -16,6 +16,10 @@ router.post('/',
     upload.single("mama"),
     foodController.createFood)
 
+    router.delete('/:id',
+        authMiddleware.authFoodPartnerMiddleware,
+        foodController.deleteFood)
+
 
 /* GET /api/food/ [protected] */
 router.get("/",

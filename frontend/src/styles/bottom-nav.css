@@ -18,7 +18,7 @@
   margin: 0 auto;
   height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .bottom-nav__item {
@@ -36,6 +36,27 @@
 .bottom-nav__icon { line-height: 0; }
 
 .bottom-nav__label { font-size: 12px; }
+
+.logout-button {
+  position: absolute;
+  right: 12px;
+  bottom: calc(100% + 10px);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.logout-button:disabled { opacity: .65; }
+
+@media (max-width: 520px) {
+  .bottom-nav { height: 64px; }
+  .bottom-nav__label { font-size: 11px; }
+  .logout-button { right: 8px; bottom: calc(100% + 8px); }
+}
 
 /* Safe area for iOS */
 @supports(padding: max(0px)) {

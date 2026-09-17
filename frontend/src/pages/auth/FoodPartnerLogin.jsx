@@ -2,6 +2,7 @@ import React from 'react';
 import '../../styles/auth-shared.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const FoodPartnerLogin = () => {
 
@@ -13,13 +14,14 @@ const FoodPartnerLogin = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const response = await axios.post("http://localhost:3000/api/auth/food-partner/login", {
+    const response = await axios.post(`${API_BASE_URL}/api/auth/food-partner/login`, {
       email,
       password
     }, { withCredentials: true });
 
     console.log(response.data);
 
+    localStorage.setItem('zomafeeds-role', 'food-partner');
     navigate("/create-food"); // create food page jayega login ke baad
 
   };

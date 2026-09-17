@@ -2,6 +2,7 @@ import React from 'react';
 import '../../styles/auth-shared.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const UserLogin = () => {
 
@@ -14,13 +15,14 @@ const UserLogin = () => {
     const password = e.target.password.value;
 
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/user/login", {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/user/login`, {
         email,
         password
       }, { withCredentials: true });
 
       console.log(response.data);
-      navigate("/home"); // Navigate only on success
+      localStorage.setItem('zomafeeds-role', 'user');
+      navigate("/reels"); // Navigate only on success
     } catch (error) {
       console.error("Login error:", error);
       // Optionally, display an error message to the user (e.g., via state or an alert)

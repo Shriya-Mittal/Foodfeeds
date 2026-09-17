@@ -1,6 +1,8 @@
 /* Shared Auth Form Styles */
 @import './theme.css';
 
+.auth-session-loading { min-height: 100dvh; display: grid; place-items: center; color: var(--color-text-secondary); }
+
 .auth-page-wrapper {
   min-height: 100dvh;
   display: flex;

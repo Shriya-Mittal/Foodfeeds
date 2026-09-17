@@ -150,3 +150,101 @@
 .empty-state{
   position: absolute; inset: 0; display: grid; place-items: center; color: #fff;
 }
+
+.reels-close-button {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  z-index: 20;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .48);
+  color: #fff;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.reel-action.is-active { color: #ff3030; }
+
+@media (max-width: 767px) {
+  .reels-close-button { top: 12px; right: 12px; }
+  .reel > .comment-section {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 76px;
+    z-index: 10;
+    max-height: 52dvh;
+    overflow: auto;
+    margin: 0;
+  }
+}
+
+/* Laptop layout: keep the reel portrait-sized and centered like a social video viewer. */
+@media (min-width: 768px) {
+  .reels-page {
+    height: 100dvh;
+    background: #0d0f12;
+  }
+
+  .reels-page + .bottom-nav { display: none; }
+
+  .reels-feed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 110px;
+  }
+
+  .reel {
+    flex: 0 0 auto;
+    width: min(420px, 100%);
+    height: calc(100dvh - 32px);
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: visible;
+  }
+
+  .reel-video,
+  .reel-overlay,
+  .reel-overlay-gradient {
+    border-radius: 8px;
+  }
+
+  .reel-content {
+    padding: 28px;
+    padding-bottom: 28px;
+  }
+
+  .reel-actions {
+    right: -76px;
+    bottom: 50%;
+    transform: translateY(50%);
+    gap: 18px;
+  }
+
+  .reel-action {
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border-color: transparent;
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .reel-action__count { color: #fff; }
+
+  .reel > .comment-section {
+    position: absolute;
+    left: calc(100% + 28px);
+    bottom: 24px;
+    z-index: 10;
+    width: 320px;
+    margin: 0;
+  }
+}

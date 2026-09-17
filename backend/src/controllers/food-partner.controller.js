@@ -1,6 +1,29 @@
 const foodPartnerModel = require('../models/foodpartner.model');
 const foodModel = require('../models/food.model');
 
+async function getMyFoodPartnerProfile(req, res) {
+    const foodItems = await foodModel.find({ foodPartner: req.foodPartner._id }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+        message: "Food partner retrieved successfully",
+        foodPartner: {
+            ...req.foodPartner.toObject(),
+            foodItems
+        }
+    });
+}
+
+async function getFoodPartners(req, res) {
+    const foodPartners = await foodPartnerModel
+        .find({}, 'name address contactName profilePicture')
+        .sort({ name: 1 });
+
+    res.status(200).json({
+        message: "Food partners retrieved successfully",
+        foodPartners
+    });
+}
+
 async function getFoodPartnerById(req, res) {
 
     const foodPartnerId = req.params.id;
@@ -23,5 +46,7 @@ async function getFoodPartnerById(req, res) {
 }
 
 module.exports = {
+    getMyFoodPartnerProfile,
+    getFoodPartners,
     getFoodPartnerById
 };

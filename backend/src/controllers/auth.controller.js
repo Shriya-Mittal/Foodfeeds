@@ -3,6 +3,38 @@ const foodPartnerModel = require("../models/foodpartner.model")
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+async function getCurrentSession(req, res) {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(401).json({ message: "Please login first" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await userModel.findById(decoded.id).select('-password');
+
+        if (user) {
+            return res.status(200).json({ role: 'user', user });
+        }
+
+        const foodPartner = await foodPartnerModel.findById(decoded.id).select('-password');
+
+        if (foodPartner) {
+            return res.status(200).json({ role: 'food-partner', foodPartner });
+        }
+
+        return res.status(401).json({ message: "Invalid session" });
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid session" });
+    }
+}
+
+async function getUserProfile(req, res) {
+    const user = await userModel.findById(req.user._id).select('-password');
+    res.status(200).json({ user });
+}
+
 async function registerUser(req, res) {
 
     const { fullName, email, password } = req.body;
@@ -19,10 +51,18 @@ async function registerUser(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    let profilePicture = '';
+    if (req.file) {
+        const storageService = require('../services/storage.service');
+        const uploadResult = await storageService.uploadFile(req.file.buffer, `user-profile-${Date.now()}`);
+        profilePicture = uploadResult.url;
+    }
+
     const user = await userModel.create({
         fullName,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        profilePicture
     })
 
     const token = jwt.sign({
@@ -36,7 +76,8 @@ async function registerUser(req, res) {
         user: {
             _id: user._id,
             email: user.email,
-            fullName: user.fullName
+            fullName: user.fullName,
+            profilePicture: user.profilePicture
         }
     })
 
@@ -104,13 +145,21 @@ async function registerFoodPartner(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    let profilePicture = '';
+    if (req.file) {
+        const storageService = require('../services/storage.service');
+        const uploadResult = await storageService.uploadFile(req.file.buffer, `profile-${Date.now()}`);
+        profilePicture = uploadResult.url;
+    }
+
     const foodPartner = await foodPartnerModel.create({
         name,
         email,
         password: hashedPassword,
         phone,
         address,
-        contactName
+        contactName,
+        profilePicture
     })
 
     const token = jwt.sign({
@@ -127,7 +176,8 @@ async function registerFoodPartner(req, res) {
             name: foodPartner.name,
             address: foodPartner.address,
             contactName: foodPartner.contactName,
-            phone: foodPartner.phone
+            phone: foodPartner.phone,
+            profilePicture: foodPartner.profilePicture
         }
     })
 
@@ -166,7 +216,8 @@ async function loginFoodPartner(req, res) {
         foodPartner: {
             _id: foodPartner._id,
             email: foodPartner.email,
-            name: foodPartner.name
+            name: foodPartner.name,
+            profilePicture: foodPartner.profilePicture
         }
     })
 }
@@ -179,6 +230,8 @@ function logoutFoodPartner(req, res) {
 }
 
 module.exports = {
+    getCurrentSession,
+    getUserProfile,
     registerUser,
     loginUser,
     logoutUser,

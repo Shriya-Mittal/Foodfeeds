@@ -1,0 +1,94 @@
+.order-food-page,
+.payment-page {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  color: #fff;
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.order-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.order-form input,
+.order-form textarea {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #0f0f0f;
+  color: #fff;
+}
+
+.order-form button,
+.payment-page button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #ff3b30;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.order-form button:disabled,
+.payment-page button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: #ff6b6b;
+  font-size: 13px;
+}
+
+.order-summary {
+  background: #0f0f0f;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.order-summary .total {
+  font-weight: 700;
+  margin-top: 8px;
+  border-top: 1px solid #333;
+  padding-top: 8px;
+}
+
+.payment-method {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.payment-method label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dummy-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+}
+
+.payment-page.success {
+  text-align: center;
+}

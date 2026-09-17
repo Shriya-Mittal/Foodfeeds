@@ -12,6 +12,10 @@ const foodSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    price: {
+        type: Number,
+        default: 100,
+    },
     foodPartner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "foodpartner"

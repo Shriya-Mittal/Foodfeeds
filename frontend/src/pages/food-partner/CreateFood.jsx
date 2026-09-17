@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import '../../styles/create-food.css';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const CreateFood = () => {
     const [ name, setName ] = useState('');
@@ -9,7 +10,10 @@ const CreateFood = () => {
     const [ videoFile, setVideoFile ] = useState(null);
     const [ videoURL, setVideoURL ] = useState('');
     const [ fileError, setFileError ] = useState('');
+    const [ uploadError, setUploadError ] = useState('');
+    const [ isUploading, setIsUploading ] = useState(false);
     const fileInputRef = useRef(null);
+    const uploadLockRef = useRef(false);
 
     const navigate = useNavigate();
 
@@ -49,6 +53,8 @@ const CreateFood = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        if (uploadLockRef.current || isDisabled) return;
+        uploadLockRef.current = true;
 
         const formData = new FormData();
 
@@ -56,12 +62,21 @@ const CreateFood = () => {
         formData.append('description', description);
         formData.append("mama", videoFile);
 
-        const response = await axios.post("http://localhost:3000/api/food", formData, {
-            withCredentials: true,
-        })
+        setIsUploading(true);
+        setUploadError('');
+        try {
+            const response = await axios.post(`${API_BASE_URL}/api/food`, formData, {
+                withCredentials: true,
+            });
 
-        console.log(response.data);
-        navigate("/profile"); // Redirect to home or another page after successful creation
+            console.log(response.data);
+            navigate("/profile");
+        } catch (error) {
+            setUploadError(error.response?.data?.message || 'Food upload failed. Please try again.');
+        } finally {
+            uploadLockRef.current = false;
+            setIsUploading(false);
+        }
 
     };
 
@@ -155,11 +170,19 @@ const CreateFood = () => {
                     </div>
 
                     <div className="form-actions">
-                        <button className="btn-primary" type="submit" disabled={isDisabled}>
-                            Save Food
+                        {uploadError && <p className="error-text" role="alert">{uploadError}</p>}
+                        <button className="btn-primary" type="submit" disabled={isDisabled || isUploading}>
+                            {isUploading ? 'Uploading food...' : 'Save Food'}
                         </button>
                     </div>
                 </form>
+                {isUploading && (
+                    <div className="uploading-overlay" role="status" aria-live="polite">
+                        <div className="uploading-spinner" aria-hidden="true" />
+                        <strong>Uploading your food video...</strong>
+                        <span>Please keep this page open.</span>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -3,13 +3,17 @@ import { Link } from 'react-router-dom';
 import '../../styles/auth-shared.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const FoodPartnerRegister = () => {
+  const [submitting, setSubmitting] = React.useState(false);
+  const [error, setError] = React.useState('');
 
   const navigate = useNavigate()
   
-  const handleSubmit = (e) => { 
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
 
     const businessName = e.target.businessName.value;
     const contactName = e.target.contactName.value;
@@ -17,22 +21,30 @@ const FoodPartnerRegister = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     const address = e.target.address.value;
+    const profilePicture = e.target.profilePicture.files[0];
+    const formData = new FormData();
 
-    axios.post("http://localhost:3000/api/auth/food-partner/register", {
-      name:businessName,
-      contactName,
-      phone,
-      email,
-      password,
-      address
-    }, { withCredentials: true })
-      .then(response => {
+    formData.append('name', businessName);
+    formData.append('contactName', contactName);
+    formData.append('phone', phone);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('address', address);
+    if (profilePicture) formData.append('profilePicture', profilePicture);
+
+    setSubmitting(true);
+    setError('');
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/food-partner/register`, formData, { withCredentials: true });
         console.log(response.data);
+        localStorage.setItem('zomafeeds-role', 'food-partner');
         navigate("/create-food"); // Redirect ho jayega create food page par
-      })
-      .catch(error => {
-        console.error("There was an error registering!", error)
-      });
+    } catch (requestError) {
+      console.error("There was an error registering!", requestError);
+      setError(requestError.response?.data?.message || 'Registration failed');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -73,7 +85,14 @@ const FoodPartnerRegister = () => {
             <input id="address" name="address" placeholder="123 Market Street" autoComplete="street-address" />
             <p className="small-note">Full address helps customers find you faster.</p>
           </div>
-          <button className="auth-submit" type="submit">Create Partner Account</button>
+          <div className="field-group">
+            <label htmlFor="profilePicture">Profile picture</label>
+            <input id="profilePicture" name="profilePicture" type="file" accept="image/*" />
+          </div>
+          {error && <p className="error-text" role="alert">{error}</p>}
+          <button className="auth-submit" type="submit" disabled={submitting}>
+            {submitting ? 'Creating account...' : 'Create Partner Account'}
+          </button>
         </form>
         <div className="auth-alt-action">
           Already a partner? <Link to="/food-partner/login">Sign in</Link>

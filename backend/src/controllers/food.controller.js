@@ -2,10 +2,15 @@ const foodModel = require('../models/food.model');
 const storageService = require('../services/storage.service');
 const likeModel = require("../models/likes.model")
 const saveModel = require("../models/save.model")
+const commentModel = require("../models/comment.model")
 const { v4: uuid } = require("uuid")
 
 
 async function createFood(req, res) {
+    if (!req.file) {
+        return res.status(400).json({ message: "Food video is required" });
+    }
+
     const fileUploadResult = await storageService.uploadFile(req.file.buffer, uuid())
 
     const foodItem = await foodModel.create({
@@ -24,11 +29,29 @@ async function createFood(req, res) {
 
 async function getFoodItems(req, res) {
     const foodItems = await foodModel.find({})
+    const foodItemsWithCounts = await Promise.all(foodItems.map(async (foodItem) => ({
+        ...foodItem.toObject(),
+        commentsCount: await commentModel.countDocuments({ food: foodItem._id })
+    })))
     res.status(200).json({
         message: "Food items fetched successfully",
-        foodItems
+        foodItems: foodItemsWithCounts
     })
 }
+
+    async function deleteFood(req, res) {
+        const food = await foodModel.findOne({
+            _id: req.params.id,
+            foodPartner: req.foodPartner._id
+        });
+
+        if (!food) {
+            return res.status(404).json({ message: "Food video not found" });
+        }
+
+        await food.deleteOne();
+        res.status(200).json({ message: "Food video deleted successfully" });
+    }
 
 
 async function likeFood(req, res) {
@@ -51,7 +74,8 @@ async function likeFood(req, res) {
         })
 
         return res.status(200).json({
-            message: "Food unliked successfully"
+            message: "Food unliked successfully",
+            liked: false
         })
     }
 
@@ -66,7 +90,8 @@ async function likeFood(req, res) {
 
     res.status(201).json({
         message: "Food liked successfully",
-        like
+        like,
+        liked: true
     })
 
 }
@@ -92,7 +117,8 @@ async function saveFood(req, res) {
         })
 
         return res.status(200).json({
-            message: "Food unsaved successfully"
+            message: "Food unsaved successfully",
+            saved: false
         })
     }
 
@@ -107,7 +133,8 @@ async function saveFood(req, res) {
 
     res.status(201).json({
         message: "Food saved successfully",
-        save
+        save,
+        saved: true
     })
 
 }
@@ -122,9 +149,17 @@ async function getSaveFood(req, res) {
         return res.status(404).json({ message: "No saved foods found" });
     }
 
+    const savedFoodsWithCounts = await Promise.all(savedFoods.map(async (savedFood) => ({
+        ...savedFood.toObject(),
+        food: {
+            ...savedFood.food.toObject(),
+            commentsCount: await commentModel.countDocuments({ food: savedFood.food._id })
+        }
+    })));
+
     res.status(200).json({
         message: "Saved foods retrieved successfully",
-        savedFoods
+        savedFoods: savedFoodsWithCounts
     });
 
 }
@@ -133,6 +168,7 @@ async function getSaveFood(req, res) {
 module.exports = {
     createFood,
     getFoodItems,
+        deleteFood,
     likeFood,
     saveFood,
     getSaveFood

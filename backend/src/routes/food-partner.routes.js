@@ -4,6 +4,15 @@ const authMiddleware = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
+router.get("/me",
+    authMiddleware.authFoodPartnerMiddleware,
+    foodPartnerController.getMyFoodPartnerProfile)
+
+/* GET /api/food-partner [protected user route] */
+router.get("/",
+    authMiddleware.authUserMiddleware,
+    foodPartnerController.getFoodPartners)
+
 
 /* /api/food-partner/:id */
 router.get("/:id",

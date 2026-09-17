@@ -1,9 +1,12 @@
-import React, { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import CommentSection from './CommentSection'
 
 
-const ReelFeed = ({ items = [], onLike, onSave, emptyMessage = 'No videos yet.' }) => {
+const ReelFeed = ({ items = [], onLike, onSave, onCommentAdded, emptyMessage = 'No videos yet.' }) => {
   const videoRefs = useRef(new Map())
+  const [openCommentsId, setOpenCommentsId] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -32,6 +35,7 @@ const ReelFeed = ({ items = [], onLike, onSave, emptyMessage = 'No videos yet.' 
 
   return (
     <div className="reels-page">
+      <button className="reels-close-button" type="button" onClick={() => navigate('/home')} aria-label="Close reels">&times;</button>
       <div className="reels-feed" role="list">
         {items.length === 0 && (
           <div className="empty-state">
@@ -57,11 +61,11 @@ const ReelFeed = ({ items = [], onLike, onSave, emptyMessage = 'No videos yet.' 
                 <div className="reel-action-group">
                   <button
                     onClick={onLike ? () => onLike(item) : undefined}
-                    className="reel-action"
+                    className={`reel-action ${item.isLiked ? 'is-active' : ''}`}
                     aria-label="Like"
                   >
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z" fill={item.isLiked ? 'currentColor' : 'none'} />
                     </svg>
                   </button>
                   <div className="reel-action__count">{item.likeCount ?? item.likesCount ?? item.likes ?? 0}</div>
@@ -69,19 +73,19 @@ const ReelFeed = ({ items = [], onLike, onSave, emptyMessage = 'No videos yet.' 
 
                 <div className="reel-action-group">
                   <button
-                    className="reel-action"
+                    className={`reel-action ${item.isSaved ? 'is-active' : ''}`}
                     onClick={onSave ? () => onSave(item) : undefined}
                     aria-label="Bookmark"
                   >
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
+                      <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" fill={item.isSaved ? 'currentColor' : 'none'} />
                     </svg>
                   </button>
                   <div className="reel-action__count">{item.savesCount ?? item.bookmarks ?? item.saves ?? 0}</div>
                 </div>
 
                 <div className="reel-action-group">
-                  <button className="reel-action" aria-label="Comments">
+                  <button className="reel-action" onClick={() => setOpenCommentsId(openCommentsId === item._id ? null : item._id)} aria-label="Comments">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
                     </svg>
@@ -95,8 +99,16 @@ const ReelFeed = ({ items = [], onLike, onSave, emptyMessage = 'No videos yet.' 
                 {item.foodPartner && (
                   <Link className="reel-btn" to={"/food-partner/" + item.foodPartner} aria-label="Visit store">Visit store</Link>
                 )}
+                <Link className="order-btn" to={`/order/${item._id}`}>Order Now</Link>
               </div>
             </div>
+            {openCommentsId === item._id && (
+              <CommentSection
+                foodId={item._id}
+                onClose={() => setOpenCommentsId(null)}
+                onCommentAdded={(comment, count) => onCommentAdded?.(item, comment, count)}
+              />
+            )}
           </section>
         ))}
       </div>

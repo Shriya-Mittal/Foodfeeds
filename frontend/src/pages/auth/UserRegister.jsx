@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../../styles/auth-shared.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const UserRegister = () => {
 
@@ -17,18 +18,22 @@ const UserRegister = () => {
         const password = e.target.password.value;
 
 
-        const response = await axios.post("http://localhost:3000/api/auth/user/register", {
-            fullName: firstName + " " + lastName,
-            email,
-            password
-        },
-        {
+        const formData = new FormData();
+        formData.append('fullName', firstName + " " + lastName);
+        formData.append('email', email);
+        formData.append('password', password);
+        if (e.target.profilePicture.files[0]) {
+            formData.append('profilePicture', e.target.profilePicture.files[0]);
+        }
+
+        const response = await axios.post(`${API_BASE_URL}/api/auth/user/register`, formData, {
             withCredentials: true
-        })
+        });
 
         console.log(response.data);
 
-        navigate("/home") // Redirect to home after registration mis complete
+        localStorage.setItem('zomafeeds-role', 'user');
+        navigate("/reels") // Redirect to reels after registration is complete
 
     };
 
@@ -60,6 +65,10 @@ const UserRegister = () => {
                     <div className="field-group">
                         <label htmlFor="password">Password</label>
                         <input id="password" name="password" type="password" placeholder="••••••••" autoComplete="new-password" />
+                    </div>
+                    <div className="field-group">
+                        <label htmlFor="profilePicture">Profile picture</label>
+                        <input id="profilePicture" name="profilePicture" type="file" accept="image/*" />
                     </div>
                     <button className="auth-submit" type="submit">Sign Up</button>
                 </form>
