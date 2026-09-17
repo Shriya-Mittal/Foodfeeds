@@ -178,6 +178,16 @@ FRONTEND_URL=http://localhost:5173
 
 MongoDB and ImageKit are required for normal operation. `FRONTEND_URL` must match the frontend origin allowed by CORS.
 
+### Render deployment
+
+Configure environment variables in the Render dashboard rather than relying on local `.env` files:
+
+- Backend service: set `NODE_ENV=production`, `PORT` is supplied by Render, and set `FRONTEND_URL` to the deployed frontend origin.
+- Frontend service: set `VITE_API_BASE_URL` to the deployed backend origin, for example `https://your-backend-service.onrender.com`.
+- If the frontend and backend are served from the same Render origin, `VITE_API_BASE_URL` can use that same HTTPS origin.
+- Redeploy the frontend after changing `VITE_API_BASE_URL`, because Vite embeds environment variables at build time.
+- Both services must use HTTPS in production so the secure authentication cookie can be stored by the browser.
+
 ## Authentication and Authorization
 
 Authentication uses a JWT stored in the `token` cookie. Axios requests send `withCredentials: true`.
